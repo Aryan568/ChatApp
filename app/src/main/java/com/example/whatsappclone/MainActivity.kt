@@ -7,6 +7,9 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -95,6 +98,41 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        Log.d("MenuDebug", "onCreateOptionsMenu called")
+        menuInflater.inflate(R.menu.menus, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.Profile -> {
+                Toast.makeText(this, "Profile", Toast.LENGTH_SHORT).show()
+                return true
+            }
+
+            R.id.Settings -> {
+                Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show()
+                return true
+            }
+
+            R.id.GroupChat -> {
+                Toast.makeText(this, "GroupChat", Toast.LENGTH_SHORT).show()
+                return true
+            }
+
+            R.id.Logout -> {
+                Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show()
+                auth.signOut()
+                val intent= Intent(this, NumberActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+
+            else -> return super.onOptionsItemSelected(item)
+        }
     }
 }
 

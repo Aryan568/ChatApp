@@ -7,7 +7,8 @@ import retrofit2.http.POST;
 
 public interface ApiInterface {
 
-    @Headers({"Authorization: key=" + ""})
+    @Headers({"Authorization: key=" + "", ""})
+
     @POST("fcm/send")
     Call<Notification> sendNotification(@Body Notification notification);
 

@@ -24,7 +24,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
             if (!isAppInForeground){
                 sendNotification(
-                    message.data.get("title").toString(), message.data.get("body").toString(), message.data.get("uid").toString(), message.data.get("fcm").toString()
+                    message.data.get("title").toString(),
+                    message.data.get("body").toString(),
+                    message.data.get("uid").toString(),
+                    message.data.get("fcm").toString()
                 )
             }
 
@@ -36,13 +39,14 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val uniqueInt = (System.currentTimeMillis() and 0xfffffffL).toInt()
         val requestCode = notificationId.hashCode() + uniqueInt
 
-        val intent = Intent(this, ChatActivity::class.java)
-        intent.putExtra("fcm",fcm)
-        intent.putExtra("name",title)
-        intent.putExtra("uid",uid)
-        intent.putExtra("openChat",true)
+        val intent = Intent(this, ChatActivity::class.java).apply {
+            putExtra("fcm", fcm)
+            putExtra("name", title)
+            putExtra("uid", uid)
+            putExtra("openChat", true)
+        }
 
-        val pendingIntent = PendingIntent.getActivity(this, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = PendingIntent.getActivity(this, requestCode, intent, PendingIntent.FLAG_IMMUTABLE)
         val channelId = "My channel ID"
         val sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
@@ -51,13 +55,14 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             .setContentText(messageBody)
             .setSound(sound)
             .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
         val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel =
                 NotificationChannel(channelId, "notification", NotificationManager.IMPORTANCE_HIGH)
             manager.createNotificationChannel(channel)
         }
-        manager.notify(notificationId, requestCode, notificationBuilder.build())
+        manager.notify(notificationId.hashCode(), notificationBuilder.build())
     }
 
 }

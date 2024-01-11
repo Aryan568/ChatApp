@@ -1,0 +1,538 @@
+Index: app/src/main/java/com/example/whatsappclone/API/ApiInterface.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.whatsappclone.API;\r\n\r\nimport retrofit2.Call;\r\nimport retrofit2.http.Body;\r\nimport retrofit2.http.Headers;\r\nimport retrofit2.http.POST;\r\n\r\npublic interface ApiInterface {\r\n\r\n    @Headers({\"Authorization: key=\" + \"AAAADuyH4CE:APA91bF9dOMcLErwjc6E0Mqhudsjo6EvelmDpz9E0YMZtUzOnuR5bIZiTvV2_5e2o9SGpN_4wxBM4cSrAnIvoJYQ13ApeDhRZW-_9mXtKhMbNvm2UuOut2nC3V3pmu5u_hThcoke9qlU\", \"Content-Type:application/json\"})\r\n    @POST(\"fcm/send\")\r\n    Call<Notification> sendNotification(@Body Notification notification);\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/whatsappclone/API/ApiInterface.java b/app/src/main/java/com/example/whatsappclone/API/ApiInterface.java
+--- a/app/src/main/java/com/example/whatsappclone/API/ApiInterface.java	
++++ b/app/src/main/java/com/example/whatsappclone/API/ApiInterface.java	
+@@ -7,7 +7,7 @@
+ 
+ public interface ApiInterface {
+ 
+-    @Headers({"Authorization: key=" + "AAAADuyH4CE:APA91bF9dOMcLErwjc6E0Mqhudsjo6EvelmDpz9E0YMZtUzOnuR5bIZiTvV2_5e2o9SGpN_4wxBM4cSrAnIvoJYQ13ApeDhRZW-_9mXtKhMbNvm2UuOut2nC3V3pmu5u_hThcoke9qlU", "Content-Type:application/json"})
++    @Headers({"Authorization: key=" + "AAAADuyH4CE:APA91bGQbsPBWXt7PToUtHq5ksf52JLpTV_BSrYxEhFwm--yHzTmExIJBAle_zOKvayift_7QCdLYKlLLI3CFtjV90k4ipFPaIRQFhsXuwAL0hvPbY1xcN2xXLbUHDZkII331EB8QJgy", "Content-Type:application/json"})
+     @POST("fcm/send")
+     Call<Notification> sendNotification(@Body Notification notification);
+ 
+Index: app/src/main/java/com/example/whatsappclone/MyFirebaseMessagingService.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.whatsappclone\r\n\r\nimport android.app.NotificationChannel\r\nimport android.app.NotificationManager\r\nimport android.app.PendingIntent\r\nimport android.content.Intent\r\nimport android.media.RingtoneManager\r\nimport android.os.Build\r\nimport android.util.Log\r\nimport androidx.core.app.NotificationCompat\r\nimport com.example.whatsappclone.Activity.ChatActivity\r\nimport com.example.whatsappclone.Activity.SplashScreenActivity\r\nimport com.example.whatsappclone.Activity.SplashScreenActivity.Companion.isAppInForeground\r\nimport com.google.firebase.auth.FirebaseAuth\r\nimport com.google.firebase.messaging.FirebaseMessaging\r\nimport com.google.firebase.messaging.FirebaseMessagingService\r\nimport com.google.firebase.messaging.RemoteMessage\r\nimport java.util.UUID\r\n\r\nclass MyFirebaseMessagingService : FirebaseMessagingService() {\r\n\r\n    override fun onMessageReceived(message: RemoteMessage) {\r\n        if (FirebaseAuth.getInstance().currentUser != null) {\r\n\r\n            if (!isAppInForeground){\r\n                sendNotification(\r\n                    message.data.get(\"title\").toString(), message.data.get(\"body\").toString(), message.data.get(\"uid\").toString(), message.data.get(\"fcm\").toString()\r\n                )\r\n            }\r\n\r\n        }\r\n    }\r\n\r\n    private fun sendNotification(title: String, messageBody: String, uid: String, fcm: String) {\r\n        val notificationId = UUID.randomUUID().toString()\r\n        val uniqueInt = (System.currentTimeMillis() and 0xfffffffL).toInt()\r\n        val requestCode = notificationId.hashCode() + uniqueInt\r\n\r\n        val intent = Intent(this, ChatActivity::class.java)\r\n        intent.putExtra(\"fcm\",fcm)\r\n        intent.putExtra(\"name\",title)\r\n        intent.putExtra(\"uid\",uid)\r\n        intent.putExtra(\"openChat\",true)\r\n\r\n        val pendingIntent = PendingIntent.getActivity(this, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT)\r\n        val channelId = \"My channel ID\"\r\n        val sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)\r\n        val notificationBuilder = NotificationCompat.Builder(this, channelId)\r\n            .setSmallIcon(R.mipmap.ic_launcher)\r\n            .setContentTitle(title)\r\n            .setContentText(messageBody)\r\n            .setSound(sound)\r\n            .setContentIntent(pendingIntent)\r\n        val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager\r\n        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {\r\n            val channel =\r\n                NotificationChannel(channelId, \"notification\", NotificationManager.IMPORTANCE_HIGH)\r\n            manager.createNotificationChannel(channel)\r\n        }\r\n        manager.notify(notificationId, requestCode, notificationBuilder.build())\r\n    }\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/whatsappclone/MyFirebaseMessagingService.kt b/app/src/main/java/com/example/whatsappclone/MyFirebaseMessagingService.kt
+--- a/app/src/main/java/com/example/whatsappclone/MyFirebaseMessagingService.kt	
++++ b/app/src/main/java/com/example/whatsappclone/MyFirebaseMessagingService.kt	
+@@ -3,6 +3,7 @@
+ import android.app.NotificationChannel
+ import android.app.NotificationManager
+ import android.app.PendingIntent
++import android.content.Context
+ import android.content.Intent
+ import android.media.RingtoneManager
+ import android.os.Build
+@@ -24,7 +25,10 @@
+ 
+             if (!isAppInForeground){
+                 sendNotification(
+-                    message.data.get("title").toString(), message.data.get("body").toString(), message.data.get("uid").toString(), message.data.get("fcm").toString()
++                    message.data.get("title").toString(),
++                    message.data.get("body").toString(),
++                    message.data.get("uid").toString(),
++                    message.data.get("fcm").toString()
+                 )
+             }
+ 
+@@ -36,13 +40,14 @@
+         val uniqueInt = (System.currentTimeMillis() and 0xfffffffL).toInt()
+         val requestCode = notificationId.hashCode() + uniqueInt
+ 
+-        val intent = Intent(this, ChatActivity::class.java)
+-        intent.putExtra("fcm",fcm)
+-        intent.putExtra("name",title)
+-        intent.putExtra("uid",uid)
+-        intent.putExtra("openChat",true)
++        val intent = Intent(this, ChatActivity::class.java).apply {
++            putExtra("fcm",fcm)
++            putExtra("name",title)
++            putExtra("uid",uid)
++            putExtra("openChat",true)
++        }
+ 
+-        val pendingIntent = PendingIntent.getActivity(this, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT)
++        val pendingIntent = PendingIntent.getActivity(this, requestCode, intent, PendingIntent.FLAG_IMMUTABLE)
+         val channelId = "My channel ID"
+         val sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+         val notificationBuilder = NotificationCompat.Builder(this, channelId)
+@@ -51,13 +56,15 @@
+             .setContentText(messageBody)
+             .setSound(sound)
+             .setContentIntent(pendingIntent)
+-        val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
++            .setAutoCancel(true)
++
++        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+             val channel =
+                 NotificationChannel(channelId, "notification", NotificationManager.IMPORTANCE_HIGH)
+             manager.createNotificationChannel(channel)
+         }
+-        manager.notify(notificationId, requestCode, notificationBuilder.build())
++        manager.notify(notificationId.hashCode(), notificationBuilder.build())
+     }
+ 
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/whatsappclone/Activity/ProfileActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.whatsappclone.Activity\r\n\r\nimport android.content.Intent\r\nimport android.net.Uri\r\nimport androidx.appcompat.app.AppCompatActivity\r\nimport android.os.Bundle\r\nimport android.widget.Toast\r\nimport androidx.appcompat.app.AlertDialog\r\nimport com.example.whatsappclone.Activity.modal.UserModal\r\nimport com.example.whatsappclone.MainActivity\r\nimport com.example.whatsappclone.R\r\nimport com.example.whatsappclone.databinding.ActivityProfileBinding\r\nimport com.google.firebase.auth.FirebaseAuth\r\nimport com.google.firebase.auth.FirebaseAuthSettings\r\nimport com.google.firebase.database.FirebaseDatabase\r\nimport com.google.firebase.storage.FirebaseStorage\r\nimport java.util.*\r\n\r\nclass ProfileActivity : AppCompatActivity() {\r\n\r\n    lateinit var binding : ActivityProfileBinding\r\n    lateinit var auth : FirebaseAuth\r\n    lateinit var database : FirebaseDatabase\r\n    lateinit var storage : FirebaseStorage\r\n    lateinit var selectedImg : Uri\r\n    lateinit var dialog: AlertDialog.Builder\r\n    override fun onCreate(savedInstanceState: Bundle?) {\r\n        super.onCreate(savedInstanceState)\r\n        setContentView(R.layout.activity_profile)\r\n\r\n        binding = ActivityProfileBinding.inflate(layoutInflater)\r\n        setContentView(binding.root)\r\n\r\n        dialog = AlertDialog.Builder(this)\r\n            .setMessage(\"Uploading Profile .....\")\r\n            .setCancelable(false)\r\n\r\n\r\n        database = FirebaseDatabase.getInstance()\r\n        storage = FirebaseStorage.getInstance()\r\n        auth = FirebaseAuth.getInstance()\r\n\r\n        binding.userImage.setOnClickListener {\r\n\r\n            val intent = Intent()\r\n            intent.action = Intent.ACTION_GET_CONTENT\r\n            intent.type = \"image/*\"\r\n\r\n            startActivityForResult(intent,1)\r\n\r\n\r\n        }\r\n\r\n        binding.ContinueBtn.setOnClickListener {\r\n\r\n            if (binding.userName.text!!.isEmpty()){\r\n                Toast.makeText(this, \"Please Enter your name\", Toast.LENGTH_LONG).show()\r\n\r\n            } else if (selectedImg == null){\r\n                Toast.makeText(this, \" Please Select your Image\", Toast.LENGTH_LONG).show()\r\n\r\n            }  else uploadData()\r\n\r\n        }\r\n\r\n\r\n    }\r\n\r\n    private fun uploadData() {\r\n\r\n\r\n        val reference = storage.reference.child(\"Profile \")\r\n            .child(Date().time.toString())\r\n        reference.putFile(selectedImg).addOnCompleteListener {\r\n           if (it.isSuccessful){\r\n               reference.downloadUrl.addOnSuccessListener {   task ->\r\n\r\n                   uploadInfo(task.toString())\r\n\r\n               }\r\n           }\r\n        }\r\n\r\n    }\r\n\r\n    private fun uploadInfo(imgUrl: String) {\r\n\r\n   val user = UserModal(auth.uid.toString(), binding.userName.text.toString()!!\r\n     ,auth.currentUser!!.phoneNumber.toString(),imgUrl)\r\n\r\n        database.reference.child(\"Users\")\r\n            .child(auth.uid.toString())\r\n            .setValue(user)\r\n            .addOnCompleteListener {\r\n\r\n                Toast.makeText(this, \"Data Inserted\" , Toast.LENGTH_LONG).show()\r\n                startActivity(Intent(this, MainActivity::class.java))\r\n                finish()\r\n            }\r\n    }\r\n\r\n\r\n    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {\r\n        super.onActivityResult(requestCode, resultCode, data)\r\n\r\n        if (data != null) {\r\n\r\n            if (data.data != null){\r\n\r\n                selectedImg = data.data!!\r\n\r\n                binding.userImage.setImageURI(selectedImg)\r\n            }\r\n        }\r\n    }\r\n\r\n\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/whatsappclone/Activity/ProfileActivity.kt b/app/src/main/java/com/example/whatsappclone/Activity/ProfileActivity.kt
+--- a/app/src/main/java/com/example/whatsappclone/Activity/ProfileActivity.kt	
++++ b/app/src/main/java/com/example/whatsappclone/Activity/ProfileActivity.kt	
+@@ -1,5 +1,128 @@
++//package com.example.whatsappclone.Activity
++//
++//import android.annotation.SuppressLint
++//import android.content.Intent
++//import android.net.Uri
++//import androidx.appcompat.app.AppCompatActivity
++//import android.os.Bundle
++//import android.widget.Toast
++//import androidx.appcompat.app.AlertDialog
++//import com.example.whatsappclone.Activity.modal.UserModal
++//import com.example.whatsappclone.MainActivity
++//import com.example.whatsappclone.R
++//import com.example.whatsappclone.databinding.ActivityProfileBinding
++//import com.google.firebase.auth.FirebaseAuth
++//import com.google.firebase.auth.FirebaseAuthSettings
++//import com.google.firebase.database.FirebaseDatabase
++//import com.google.firebase.storage.FirebaseStorage
++//import java.util.*
++//
++//class ProfileActivity : AppCompatActivity() {
++//
++//    lateinit var binding : ActivityProfileBinding
++//    lateinit var auth : FirebaseAuth
++//    lateinit var database : FirebaseDatabase
++//    lateinit var storage : FirebaseStorage
++//    lateinit var selectedImg : Uri
++//    lateinit var dialog: AlertDialog.Builder
++//    override fun onCreate(savedInstanceState: Bundle?) {
++//        super.onCreate(savedInstanceState)
++//        setContentView(R.layout.activity_profile)
++//
++//        binding = ActivityProfileBinding.inflate(layoutInflater)
++//        setContentView(binding.root)
++//
++//        dialog = AlertDialog.Builder(this)
++//            .setMessage("Uploading Profile .....")
++//            .setCancelable(false)
++//
++//
++//        database = FirebaseDatabase.getInstance()
++//        storage = FirebaseStorage.getInstance()
++//        auth = FirebaseAuth.getInstance()
++//
++//        binding.userImage.setOnClickListener {
++//
++//            val intent = Intent()
++//            intent.action = Intent.ACTION_GET_CONTENT
++//            intent.type = "image/*"
++//
++//            startActivityForResult(intent,1)
++//
++//
++//        }
++//
++//        binding.ContinueBtn.setOnClickListener {
++//
++//            if (binding.userName.text!!.isEmpty()){
++//                Toast.makeText(this, "Please Enter your name", Toast.LENGTH_LONG).show()
++//
++//            } else if (selectedImg == null){
++//                Toast.makeText(this, " Please Select your Image", Toast.LENGTH_LONG).show()
++//
++//            }  else uploadData()
++//
++//        }
++//
++//
++//    }
++//
++//    private fun uploadData() {
++//
++//
++//        val reference = storage.reference.child("Profile ")
++//            .child(Date().time.toString())
++//        reference.putFile(selectedImg).addOnCompleteListener {
++//           if (it.isSuccessful){
++//               reference.downloadUrl.addOnSuccessListener {   task ->
++//
++//                   uploadInfo(task.toString())
++//
++//               }
++//           }
++//        }
++//
++//    }
++//
++//    @SuppressLint("SuspiciousIndentation")
++//    private fun uploadInfo(imgUrl: String) {
++//
++//   val user = UserModal(auth.uid.toString(), binding.userName.text.toString()!!
++//     ,auth.currentUser!!.phoneNumber.toString(),imgUrl)
++//
++//        database.reference.child("Users")
++//            .child(auth.uid.toString())
++//            .setValue(user)
++//            .addOnCompleteListener {
++//
++//                Toast.makeText(this, "Data Inserted" , Toast.LENGTH_LONG).show()
++//                startActivity(Intent(this, MainActivity::class.java))
++//                finish()
++//            }
++//    }
++//
++//
++//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
++//        super.onActivityResult(requestCode, resultCode, data)
++//
++//        if (data != null) {
++//
++//            if (data.data != null){
++//
++//                selectedImg = data.data!!
++//
++//                binding.userImage.setImageURI(selectedImg)
++//            }
++//        }
++//    }
++//
++//
++//
++//}
++
+ package com.example.whatsappclone.Activity
+ 
++import android.annotation.SuppressLint
+ import android.content.Intent
+ import android.net.Uri
+ import androidx.appcompat.app.AppCompatActivity
+@@ -11,23 +134,21 @@
+ import com.example.whatsappclone.R
+ import com.example.whatsappclone.databinding.ActivityProfileBinding
+ import com.google.firebase.auth.FirebaseAuth
+-import com.google.firebase.auth.FirebaseAuthSettings
+ import com.google.firebase.database.FirebaseDatabase
+ import com.google.firebase.storage.FirebaseStorage
+ import java.util.*
+ 
+ class ProfileActivity : AppCompatActivity() {
+ 
+-    lateinit var binding : ActivityProfileBinding
+-    lateinit var auth : FirebaseAuth
+-    lateinit var database : FirebaseDatabase
+-    lateinit var storage : FirebaseStorage
+-    lateinit var selectedImg : Uri
++    lateinit var binding: ActivityProfileBinding
++    lateinit var auth: FirebaseAuth
++    lateinit var database: FirebaseDatabase
++    lateinit var storage: FirebaseStorage
++    lateinit var selectedImg: Uri
+     lateinit var dialog: AlertDialog.Builder
++
+     override fun onCreate(savedInstanceState: Bundle?) {
+         super.onCreate(savedInstanceState)
+-        setContentView(R.layout.activity_profile)
+-
+         binding = ActivityProfileBinding.inflate(layoutInflater)
+         setContentView(binding.root)
+ 
+@@ -35,85 +156,77 @@
+             .setMessage("Uploading Profile .....")
+             .setCancelable(false)
+ 
+-
+         database = FirebaseDatabase.getInstance()
+         storage = FirebaseStorage.getInstance()
+         auth = FirebaseAuth.getInstance()
+ 
+         binding.userImage.setOnClickListener {
+-
+             val intent = Intent()
+             intent.action = Intent.ACTION_GET_CONTENT
+             intent.type = "image/*"
+-
+-            startActivityForResult(intent,1)
+-
+-
++            startActivityForResult(intent, 1)
+         }
+ 
+         binding.ContinueBtn.setOnClickListener {
+-
+-            if (binding.userName.text!!.isEmpty()){
+-                Toast.makeText(this, "Please Enter your name", Toast.LENGTH_LONG).show()
+-
+-            } else if (selectedImg == null){
+-                Toast.makeText(this, " Please Select your Image", Toast.LENGTH_LONG).show()
+-
+-            }  else uploadData()
++            val userName = binding.userName.text.toString().trim()
+ 
++            when {
++                userName.isEmpty() -> showToast("Please Enter your name")
++                !::selectedImg.isInitialized -> showToast("Please Select your Image")
++                else -> uploadData()
++            }
+         }
+-
+-
+     }
+ 
+     private fun uploadData() {
+-
+-
+-        val reference = storage.reference.child("Profile ")
++        val reference = storage.reference.child("Profile")
+             .child(Date().time.toString())
+-        reference.putFile(selectedImg).addOnCompleteListener {
+-           if (it.isSuccessful){
+-               reference.downloadUrl.addOnSuccessListener {   task ->
+ 
+-                   uploadInfo(task.toString())
++        dialog.setMessage("Uploading Profile .....")
++        val alertDialog= dialog.create()
++        alertDialog.show()
+ 
+-               }
+-           }
++        reference.putFile(selectedImg).addOnCompleteListener { task ->
++            alertDialog.dismiss()
++            if (task.isSuccessful) {
++                reference.downloadUrl.addOnSuccessListener { url ->
++                    uploadInfo(url.toString())
++                }
++            } else {
++
++                showToast("Error uploading image")
++            }
+         }
+-
+     }
+ 
++    @SuppressLint("SuspiciousIndentation")
+     private fun uploadInfo(imgUrl: String) {
+-
+-   val user = UserModal(auth.uid.toString(), binding.userName.text.toString()!!
+-     ,auth.currentUser!!.phoneNumber.toString(),imgUrl)
++        val user = UserModal(auth.uid.toString(), binding.userName.text.toString(), auth.currentUser?.phoneNumber.orEmpty(), imgUrl)
+ 
+         database.reference.child("Users")
+             .child(auth.uid.toString())
+             .setValue(user)
+-            .addOnCompleteListener {
+-
+-                Toast.makeText(this, "Data Inserted" , Toast.LENGTH_LONG).show()
+-                startActivity(Intent(this, MainActivity::class.java))
+-                finish()
++            .addOnCompleteListener { task ->
++                dialog.create().dismiss()
++                if (task.isSuccessful) {
++                    showToast("Data Inserted")
++                    startActivity(Intent(this, MainActivity::class.java))
++                    finish()
++                } else {
++                    showToast("Error inserting data")
++                }
+             }
+     }
+-
+ 
+     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+         super.onActivityResult(requestCode, resultCode, data)
+-
+-        if (data != null) {
+-
+-            if (data.data != null){
+-
+-                selectedImg = data.data!!
+-
+-                binding.userImage.setImageURI(selectedImg)
+-            }
+-        }
++        if (data != null && data.data != null) {
++            selectedImg = data.data!!
++            binding.userImage.setImageURI(selectedImg)
++        }
++    }
++
++    private fun showToast(message: String) {
++        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+     }
+-
+-
+-
+-}
+\ No newline at end of file
++}
+Index: app/src/main/java/com/example/whatsappclone/ui/Chat_Fragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.whatsappclone.ui\r\n\r\nimport android.os.Bundle\r\nimport androidx.fragment.app.Fragment\r\nimport android.view.LayoutInflater\r\nimport android.view.View\r\nimport android.view.ViewGroup\r\nimport com.example.whatsappclone.Activity.modal.UserModal\r\nimport com.example.whatsappclone.R\r\nimport com.example.whatsappclone.adapter.chatAdapter\r\nimport com.example.whatsappclone.databinding.FragmentChatBinding\r\nimport com.google.firebase.auth.FirebaseAuth\r\nimport com.google.firebase.database.DataSnapshot\r\nimport com.google.firebase.database.DatabaseError\r\nimport com.google.firebase.database.FirebaseDatabase\r\nimport com.google.firebase.database.ValueEventListener\r\n\r\n\r\nclass Chat_Fragment : Fragment() {\r\n\r\n    lateinit var binding : FragmentChatBinding\r\n    private var database : FirebaseDatabase?= null\r\n    lateinit var userlist : ArrayList<UserModal>\r\n\r\n    override fun onCreateView(\r\n        inflater: LayoutInflater, container: ViewGroup?,\r\n        savedInstanceState: Bundle?\r\n    ): View? {\r\n        // Inflate the layout for this fragment\r\n        binding = FragmentChatBinding.inflate(inflater, container, false)\r\n\r\n        database = FirebaseDatabase.getInstance()\r\n\r\n        userlist = ArrayList()\r\n\r\n        database!!.reference.child(\"Users\")\r\n            .addValueEventListener(object : ValueEventListener {\r\n                override fun onDataChange(snapshot: DataSnapshot) {\r\n                    userlist.clear()\r\n                   for(snapshot1 in snapshot.children){\r\n                       val user  = snapshot1.getValue(UserModal::class.java)\r\n                       if (user!!.uid != FirebaseAuth.getInstance().uid){\r\n                           userlist.add(user)\r\n                       }\r\n                   }\r\n\r\n                    binding.userlistRecyclerView.adapter = chatAdapter(requireContext(),userlist)\r\n                }\r\n\r\n                override fun onCancelled(error: DatabaseError) {\r\n                    TODO(\"Not yet implemented\")\r\n                }\r\n\r\n            })\r\n\r\n\r\n        return binding.root\r\n    }\r\n\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/whatsappclone/ui/Chat_Fragment.kt b/app/src/main/java/com/example/whatsappclone/ui/Chat_Fragment.kt
+--- a/app/src/main/java/com/example/whatsappclone/ui/Chat_Fragment.kt	
++++ b/app/src/main/java/com/example/whatsappclone/ui/Chat_Fragment.kt	
+@@ -48,7 +48,7 @@
+                 }
+ 
+                 override fun onCancelled(error: DatabaseError) {
+-                    TODO("Not yet implemented")
++
+                 }
+ 
+             })
+Index: .idea/deploymentTargetDropDown.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"deploymentTargetDropDown\">\r\n    <targetSelectedWithDropDown>\r\n      <Target>\r\n        <type value=\"QUICK_BOOT_TARGET\" />\r\n        <deviceKey>\r\n          <Key>\r\n            <type value=\"VIRTUAL_DEVICE_PATH\" />\r\n            <value value=\"C:\\Users\\aryan\\.android\\avd\\Nexus_4_API_29.avd\" />\r\n          </Key>\r\n        </deviceKey>\r\n      </Target>\r\n    </targetSelectedWithDropDown>\r\n    <timeTargetWasSelectedWithDropDown value=\"2023-08-26T19:24:36.428851900Z\" />\r\n    <targetsSelectedWithDialog>\r\n      <Target>\r\n        <type value=\"QUICK_BOOT_TARGET\" />\r\n        <deviceKey>\r\n          <Key>\r\n            <type value=\"VIRTUAL_DEVICE_PATH\" />\r\n            <value value=\"C:\\Users\\aryan\\.android\\avd\\Pixel_5_API_25.avd\" />\r\n          </Key>\r\n        </deviceKey>\r\n      </Target>\r\n    </targetsSelectedWithDialog>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetDropDown.xml b/.idea/deploymentTargetDropDown.xml
+--- a/.idea/deploymentTargetDropDown.xml	
++++ b/.idea/deploymentTargetDropDown.xml	
+@@ -12,17 +12,6 @@
+         </deviceKey>
+       </Target>
+     </targetSelectedWithDropDown>
+-    <timeTargetWasSelectedWithDropDown value="2023-08-26T19:24:36.428851900Z" />
+-    <targetsSelectedWithDialog>
+-      <Target>
+-        <type value="QUICK_BOOT_TARGET" />
+-        <deviceKey>
+-          <Key>
+-            <type value="VIRTUAL_DEVICE_PATH" />
+-            <value value="C:\Users\aryan\.android\avd\Pixel_5_API_25.avd" />
+-          </Key>
+-        </deviceKey>
+-      </Target>
+-    </targetsSelectedWithDialog>
++    <timeTargetWasSelectedWithDropDown value="2024-01-09T17:43:04.991807500Z" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\">\r\n\r\n    <uses-permission android:name=\"android.permission.POST_NOTIFICATIONS\"/>\r\n    <uses-permission android:name=\"android.permission.INTERNET\" />\r\n\r\n    <application\r\n        android:allowBackup=\"true\"\r\n        android:dataExtractionRules=\"@xml/data_extraction_rules\"\r\n        android:fullBackupContent=\"@xml/backup_rules\"\r\n        android:icon=\"@mipmap/ic_launcher\"\r\n        android:label=\"@string/app_name\"\r\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\r\n        android:supportsRtl=\"true\"\r\n        android:theme=\"@style/Theme.WhatsAppClone\"\r\n        tools:targetApi=\"31\">\r\n\r\n        <meta-data\r\n            android:name=\"com.google.firebase.messaging.default_notification_icon\"\r\n            android:resource=\"@drawable/whatsapp\" />\r\n        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming\r\n             notification message. See README(https://goo.gl/6BKBk7) for more. -->\r\n        <meta-data\r\n            android:name=\"com.google.firebase.messaging.default_notification_color\"\r\n            android:resource=\"@color/purple_700\" />\r\n\r\n        <activity\r\n            android:name=\".Activity.SplashScreenActivity\"\r\n            android:exported=\"true\"\r\n            android:theme=\"@style/Theme.WhatsAppClone.NoActionBar\" >\r\n\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.MAIN\" />\r\n\r\n                <category android:name=\"android.intent.category.LAUNCHER\" />\r\n            </intent-filter>\r\n            <meta-data\r\n                android:name=\"android.app.lib_name\"\r\n                android:value=\"\" />\r\n        </activity>\r\n        <activity\r\n            android:name=\".Activity.ChatActivity\"\r\n            android:exported=\"false\" >\r\n            <meta-data\r\n                android:name=\"android.app.lib_name\"\r\n                android:value=\"\" />\r\n        </activity>\r\n        <activity\r\n            android:name=\".Activity.NumberActivity\"\r\n            android:exported=\"false\" >\r\n            <meta-data\r\n                android:name=\"android.app.lib_name\"\r\n                android:value=\"\" />\r\n        </activity>\r\n        <activity\r\n            android:name=\".Activity.ProfileActivity\"\r\n            android:exported=\"false\" >\r\n            <meta-data\r\n                android:name=\"android.app.lib_name\"\r\n                android:value=\"\" />\r\n        </activity>\r\n        <activity\r\n            android:name=\".Activity.OtpActivity\"\r\n            android:exported=\"false\" >\r\n            <meta-data\r\n                android:name=\"android.app.lib_name\"\r\n                android:value=\"\" />\r\n        </activity>\r\n\r\n        <activity\r\n            android:name=\".MainActivity\"\r\n            android:exported=\"false\" >\r\n\r\n\r\n            <meta-data\r\n                android:name=\"android.app.lib_name\"\r\n                android:value=\"\" />\r\n        </activity>\r\n        <service\r\n            android:name=\".MyFirebaseMessagingService\"\r\n            android:exported=\"false\">\r\n            <intent-filter>\r\n                <action android:name=\"com.google.firebase.MESSAGING_EVENT\" />\r\n            </intent-filter>\r\n        </service>\r\n    </application>\r\n\r\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+--- a/app/src/main/AndroidManifest.xml	
++++ b/app/src/main/AndroidManifest.xml	
+@@ -2,7 +2,7 @@
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:tools="http://schemas.android.com/tools">
+ 
+-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
++    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+     <uses-permission android:name="android.permission.INTERNET" />
+ 
+     <application
+@@ -15,12 +15,17 @@
+         android:supportsRtl="true"
+         android:theme="@style/Theme.WhatsAppClone"
+         tools:targetApi="31">
++        <activity
++            android:name=".Activity.userProfile"
++            android:exported="false" />
+ 
+         <meta-data
+             android:name="com.google.firebase.messaging.default_notification_icon"
+             android:resource="@drawable/whatsapp" />
+-        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
+-             notification message. See README(https://goo.gl/6BKBk7) for more. -->
++        <!--
++ Set color used with incoming notification messages. This is used when no color is set for the incoming
++             notification message. See README(https://goo.gl/6BKBk7) for more.
++        -->
+         <meta-data
+             android:name="com.google.firebase.messaging.default_notification_color"
+             android:resource="@color/purple_700" />
+@@ -28,55 +33,53 @@
+         <activity
+             android:name=".Activity.SplashScreenActivity"
+             android:exported="true"
+-            android:theme="@style/Theme.WhatsAppClone.NoActionBar" >
+-
++            android:theme="@style/Theme.WhatsAppClone.NoActionBar">
+             <intent-filter>
+                 <action android:name="android.intent.action.MAIN" />
+ 
+                 <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>
++
+             <meta-data
+                 android:name="android.app.lib_name"
+                 android:value="" />
+         </activity>
+         <activity
+             android:name=".Activity.ChatActivity"
+-            android:exported="false" >
++            android:exported="false">
+             <meta-data
+                 android:name="android.app.lib_name"
+                 android:value="" />
+         </activity>
+         <activity
+             android:name=".Activity.NumberActivity"
+-            android:exported="false" >
++            android:exported="false">
+             <meta-data
+                 android:name="android.app.lib_name"
+                 android:value="" />
+         </activity>
+         <activity
+             android:name=".Activity.ProfileActivity"
+-            android:exported="false" >
++            android:exported="false">
+             <meta-data
+                 android:name="android.app.lib_name"
+                 android:value="" />
+         </activity>
+         <activity
+             android:name=".Activity.OtpActivity"
+-            android:exported="false" >
++            android:exported="false">
+             <meta-data
+                 android:name="android.app.lib_name"
+                 android:value="" />
+         </activity>
+-
+         <activity
+             android:name=".MainActivity"
+-            android:exported="false" >
+-
+-
++            android:exported="false">
+             <meta-data
+                 android:name="android.app.lib_name"
+                 android:value="" />
+         </activity>
++
+         <service
+             android:name=".MyFirebaseMessagingService"
+             android:exported="false">

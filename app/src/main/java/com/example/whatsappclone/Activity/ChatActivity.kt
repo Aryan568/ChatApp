@@ -3,10 +3,12 @@ package com.example.whatsappclone.Activity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
 import com.example.whatsappclone.API.Notification
 import com.example.whatsappclone.API.NotificationData
 import com.example.whatsappclone.API.RetrofitInstance
 import com.example.whatsappclone.Activity.modal.MessageModel
+import com.example.whatsappclone.R
 import com.example.whatsappclone.adapter.MessageAdapter
 import com.example.whatsappclone.databinding.ActivityChatBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -52,6 +54,8 @@ class ChatActivity : AppCompatActivity(){
 
 
         database = FirebaseDatabase.getInstance()
+
+        fetchSenderProfile()
 
 
         binding.ImgSend.setOnClickListener {
@@ -148,5 +152,30 @@ class ChatActivity : AppCompatActivity(){
             })
 
 
+    }
+
+    private fun fetchSenderProfile() {
+        val senderRef = database.reference.child("Users").child(receiverUid)
+        senderRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    val username = snapshot.child("name").value.toString()
+                    val profileImageUrl = snapshot.child("imageUrl").value.toString()
+
+                    // Update sender's profile image using Glide or any other image loading library
+                    Glide.with(this@ChatActivity)
+                        .load(profileImageUrl)
+                        .placeholder(R.drawable.avatar)
+                        .error(R.drawable.avatar)
+                        .into(binding.profileImg)
+
+                    binding.userName.text = username
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Handle error if needed
+            }
+        })
     }
 }

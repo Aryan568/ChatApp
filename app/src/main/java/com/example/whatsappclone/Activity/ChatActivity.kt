@@ -155,8 +155,8 @@ class ChatActivity : AppCompatActivity(){
     }
 
     private fun fetchSenderProfile() {
-        val senderRef = database.reference.child("Users").child(receiverUid)
-        senderRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        val receiverRef = database.reference.child("Users").child(receiverUid)
+        receiverRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
                     val username = snapshot.child("name").value.toString()

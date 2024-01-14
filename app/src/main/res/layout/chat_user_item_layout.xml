@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:textColor="@color/black"
-            android:text="Kaushik karan singh"/>
+            android:text="Aryan Patidar"/>
 
         <TextView
             android:id="@+id/recent_message"

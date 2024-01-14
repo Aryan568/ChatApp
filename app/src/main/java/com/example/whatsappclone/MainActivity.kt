@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.whatsappclone.Activity.ChatActivity
 import com.example.whatsappclone.Activity.NumberActivity
 import com.example.whatsappclone.Activity.modal.UserModal
+import com.example.whatsappclone.Activity.userProfile
 import com.example.whatsappclone.adapter.ViewPagerAdapter
 import com.example.whatsappclone.databinding.ActivityMainBinding
 import com.example.whatsappclone.ui.Call_Fragment
@@ -110,6 +111,8 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.Profile -> {
                 Toast.makeText(this, "Profile", Toast.LENGTH_SHORT).show()
+                val intent= Intent(this, userProfile::class.java)
+                startActivity(intent)
                 return true
             }
 
